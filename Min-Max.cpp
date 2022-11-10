@@ -1,359 +1,249 @@
-#include<iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
+#define COMPUTER 1
+#define HUMAN 2
 
-int rating(int board[], int v, int b)
+int player = 3, opponent = 5;
+
+void showBoard(int board[]){
+    for(int i=1;i<=9;i++){
+        if(board[i] == 2){
+            cout<<"_ ";
+        }
+        if(board[i] == 3){
+            cout<<"X ";
+        }
+        if(board[i] == 5){
+            cout<<"O ";
+        }
+        if(i % 3 == 0){
+            cout<<endl;
+        }
+    }
+    cout<<endl;
+}
+
+void showStartingBoard()
 {
-    if (b==1)
+    cout << " 1 | 2 | 3 \n";
+    cout << " 4 | 5 | 6 \n";
+    cout << " 7 | 8 | 9 \n";
+}
+
+void initialise(int board[10])
+{
+    for (int i = 1; i <=9; i++)
     {
-        if((board[2]==v && board[3]==v) || (board[4]==v && board[7]==v) || (board[5]==v && board[9]==v))
-        return 10;
-        else if(board[2]==v || board[3]==v || board[4]==v || board[7]==v || board[5]==v || board[9]==v)
-        return 5;
-        else
-        return 2;
+        board[i] = 2;
     }
-    else if(b==2)
+}
+
+bool isWin(int board[])
+{
+    for (int row = 0; row<3; row++)
+	{
+		if (board[1+3*row]== board[2+3*row] && board[2+3*row] == board[3+3*row] && board[1+3*row] != 2)
+		{
+            return true;
+		}
+	}
+
+	for (int col = 0; col<3; col++)
+	{
+		if (board[1+col]== board[4+col] && board[4+col]==board[7+col] && board[1+col] != 2)
+		{
+            return true;
+		}
+	}
+
+	if (board[1]==board[5] && board[5]==board[9] && board[5] != 2)
+	{
+		return true;
+	}
+
+	if (board[3]==board[5] && board[5]==board[7] && board[5] != 2)
+	{
+		return true;
+	}
+
+    return (false);
+}
+
+bool gameOver(int board[])
+{
+    return isWin(board);
+}
+
+int minimax(int board[], int depth, bool isAI, int edepth)
+{
+    int score = 0;
+    int bestScore = 0;
+    if (gameOver(board) == true)
     {
-        if((board[1]==v && board[3]==v) || (board[5]==v && board[8]==v))
-        return 10;
-        else if(board[1]==v || board[3]==v || board[5]==v || board[8]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if (b==3)
-    {
-        if((board[2]==v && board[1]==v) || (board[5]==v && board[7]==v) || (board[6]==v && board[9]==v))
-        return 10;
-        else if(board[2]==v || board[1]==v || board[5]==v || board[7]==v || board[6]==v || board[9]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if(b==4)
-    {
-        if((board[1]==v && board[7]==v) || (board[5]==v && board[6]==v))
-        return 10;
-        else if(board[1]==v || board[7]==v || board[5]==v || board[6]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if(b==5)
-    {
-        if((board[1]==v && board[9]==v) || (board[2]==v && board[8]==v) || (board[3]==v && board[7]==v) || (board[4]==v && board[6]==v))
-        return 10;
-        else if(board[1]==v || board[9]==v || board[2]==v || board[8]==v || board[3]==v || board[7]==v || board[4]==v || board[6]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if(b==6)
-    {
-        if((board[4]==v && board[5]==v) || (board[3]==v && board[9]==v))
-        return 10;
-        else if(board[4]==v || board[5]==v || board[3]==v || board[9]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if (b==7)
-    {
-        if((board[1]==v && board[4]==v) || (board[5]==v && board[3]==v) || (board[8]==v && board[9]==v))
-        return 10;
-        else if(board[1]==v || board[4]==v || board[5]==v || board[3]==v || board[8]==v || board[9]==v)
-        return 5;
-        else
-        return 2;
-    }
-    else if(b==8)
-    {
-        if((board[2]==v && board[5]==v) || (board[7]==v && board[9]==v))
-        return 10;
-        else if(board[2]==v || board[5]==v || board[7]==v || board[9]==v)
-        return 5;
-        else
-        return 2;
+        if (isAI == true)
+            return -1;
+        if (isAI == false)
+            return +1;
     }
     else
     {
-        if((board[5]==v && board[1]==v) || (board[8]==v && board[7]==v) || (board[6]==v && board[3]==v))
-        return 10;
-        else if(board[5]==v || board[1]==v || board[8]==v || board[7]==v || board[6]==v || board[3]==v)
-        return 5;
-        else
-        return 2;
-    }
-}
-
-
-void user_move(int board[], int v)
-{
-    int s;
-    while(1)
-    {
-        cout << "Enter square: ";
-        cin >> s;
-
-        if(board[s]==2)
+        if (depth < edepth)
         {
-            board[s] = v;
-            break;;
-        }
-        else
-        cout << "Square already filled.\n";
-    }
-}
-
-
-int Go(int board[], int n, int turn)
-{
-    if(turn%2 == 1)
-    board[n] = 3;
-    else
-    board[n] = 5;
-
-    return turn+1;
-}
-
-
-int blank(int board[])
-{
-    int i=1;
-    for(;i<=9;i++)
-    {
-        if(board[i]==2)
-        break;
-    }
-
-    return i;
-}
-
-
-bool Checkwin(int board[], int v)
-{
-    for(int i=1;i<9;i=i+3)
-    {
-        if(board[i]==3 && board[i+1]==3 && board[i+2]==3 && v==3)
-        return true;
-        else if(board[i]==5 && board[i+1]==5 && board[i+2]==5 && v==5)
-        return true;
-    }
-
-    for(int i=1;i<4;i++)
-    {
-        if(board[i]==3 && board[i+3]==3 && board[i+6]==3 && v==3)
-        return true;
-        else if(board[i]==5 && board[i+3]==5 && board[i+6]==5 && v==5)
-        return true;
-    }
-
-    if(board[1]==3 && board[5]==3 && board[9]==3 && v==3)
-    return true;
-    else if(board[1]==5 && board[5]==5 && board[9]==5 && v==5)
-    return true;
-    
-    if(board[3]==3 && board[5]==3 && board[7]==3 && v==3)
-    return true;
-    else if(board[3]==5 && board[5]==5 && board[7]==5 && v==5)
-    return true;
-
-
-    return false;
-
-}
-
-
-void display(int board[])
-{
-    for(int i=1;i<=9;i++)
-    {
-        if(i==3 || i==6)
-        {
-            if(board[i]==2)
-            cout << " \n";
-            else if(board[i]==3)
-            cout << "x\n";
-            else
-            cout << "o\n";
-
-            cout << "---------\n";
-        }
-        else if(i==9)
-        {
-            if(board[i]==2)
-            cout << " \n";
-            else if(board[i]==3)
-            cout << "x\n";
-            else
-            cout << "o\n";
-        }
-        else
-        {
-            if(board[i]==2)
-            cout << "  | ";
-            else if(board[i]==3)
-            cout << "x | ";
-            else
-            cout << "o | ";
-        }
-    }
-}
-
-int minmax(int virtualBoard[], int depth, int v, int *move)
-{
-    int bestMove = -10;
-    if(depth==1)
-    {
-        for(int i=1;i<=9;i++)
-        {
-            if(virtualBoard[i]==2)
+            if (isAI == true)
             {
-                int currentRating = rating(virtualBoard, v, i);
-                if(currentRating > bestMove)
+                bestScore = -9999;
+                for (int i = 1; i <=9 ; i++)
                 {
-                    bestMove = currentRating;
-                    *move = i;
-                }
-            }
-        }
-        return bestMove;
-    }
-    else
-    {
-        for(int i=1;i<=9;i++)
-        {
-            if(virtualBoard[i]==2)
-            {
-                if(v==3)
-                {
-                    virtualBoard[i] = 3;
-                    int currentRating = minmax(virtualBoard, depth-1, 5, move);
-                    if(currentRating > bestMove)
+                    if (board[i] == 2)
                     {
-                        bestMove = currentRating;
-                        *move = i;
+                        board[i] = 5;
+                        score = minimax(board, depth + 1, false,edepth);
+                        board[i] = 2;
+                        if (score > bestScore)
+                        {
+                            bestScore = score;
+                        }
                     }
                 }
-                else
+                return bestScore;
+            }
+            else
+            {
+                bestScore = 9999;
+                for (int i = 1; i <= 9; i++)
                 {
-                    virtualBoard[i] = 5;
-                    int currentRating = minmax(virtualBoard, depth-1, 3, move);
-                    if(currentRating > bestMove)
+                    if (board[i] == 2)
                     {
-                        bestMove = currentRating;
-                        *move = i;
+                        board[i] = 3;
+                        score = minimax(board, depth + 1, true,edepth);
+                        board[i] = 2;
+                        if (score < bestScore)
+                        {
+                            bestScore = score;
+                        }
                     }
+
                 }
+                return bestScore;
             }
         }
-        return bestMove;
+        else
+        {
+            return 0;
+        }
     }
 }
 
-void comp_move(int board[], int virtualBoard[], int depth, int turn, int v)
+int bestMove(int board[], int moveIndex, int edepth)
 {
-    if(turn == 1)
-    turn = Go(board, 1, turn);
-
-    else if(turn == 2)
+    int x = -1;
+    int score = 0, bestScore = -9999;
+    for (int i = 1; i <= 9; i++)
     {
-        if(board[5]==2)
-        turn = Go(board, 5, turn);
-        else
-        turn = Go(board, 1, turn);
+            if (board[i] == 2)
+            {
+                board[i] = 5;
+                score = minimax(board, moveIndex + 1, false, edepth);
+                board[i] = 2;
+                if (score > bestScore)
+                {
+                    bestScore = score;
+                    x = i;
+                }
+            }
     }
-
-    else if(turn == 3)
-    {
-        if(board[9]==2)
-        turn = Go(board, 9, turn);
-        else
-        turn = Go(board, 3, turn);
-    }
-    else 
-    {
-        int move = 0;
-        minmax(virtualBoard, depth, v, &move);
-        turn = Go(board, move, turn);
-        virtualBoard = board;
-    }
+    return x;
 }
 
+void playTicTacToe(int whoseTurn, int edepth)
+{
+    int board[10];
+    int moveIndex = 0;
+
+    initialise(board);
+
+    while (!gameOver(board) && moveIndex != 9)
+    {
+        int n;
+        if (whoseTurn == COMPUTER)
+        {
+            n = bestMove(board, moveIndex,edepth);
+            board[n] = 5;
+            showBoard(board);
+            moveIndex++;
+            whoseTurn = HUMAN;
+        }
+
+        else if (whoseTurn == HUMAN)
+        {
+            cout << "\n\nEnter the position = ";
+            cin >> n;
+            n;
+            if (board[n] == 2 && n <= 9 && n >= 1)
+            {
+                board[n] = 3;
+                showBoard(board);
+                moveIndex++;
+                whoseTurn = COMPUTER;
+            }
+            else if (board[n] != 2 && n <= 9 && n >= 1)
+            {
+                cout << "\nPosition is occupied, select any one place from the available places\n\n";
+            }
+            else if (n < 1 || n > 9)
+            {
+                cout << "Invalid position\n";
+            }
+        }
+    }
+    if (gameOver(board) == false && moveIndex == 9)
+    {
+        cout << "It's a draw\n";
+    }
+    else
+    {
+        if (whoseTurn == COMPUTER)
+        {
+            cout << "YOU WON" << endl;
+        }
+        else if (whoseTurn == HUMAN)
+        {
+            cout << "COMPUTER WON" << endl;
+        }
+    }
+}
 
 int main()
 {
-    int board[10] = {2,2,2,2,2,2,2,2,2,2}, virtualBoard[10] = {2,2,2,2,2,2,2,2,2,2}, turn = 1, depth = 1, flag=0;
-    char firstMove;
 
-    cout << "Do you want to play first(y/n): ";
-    cin >> firstMove;
-
-    if(firstMove == 'y')
-    {
-        while(turn<=9)
+    cout << "\t Tic-Tac-Toe\n";
+    showStartingBoard();
+    char conti = 'y';
+    do
+    {   int edepth;
+        char choice;
+        cout << "Do you want to start first?(y/n) : ";
+        cin >> choice;
+        cout<< "Enter the depth between 1 to 9 which you want for the AI: "<<endl;
+        cin>> edepth;
+        if (choice == 'n')
         {
-            user_move(board, 3);
-            turn++;
-            for(int i=1;i<10;i++)
-            virtualBoard[i] = board[i];
-            display(board);
-            if(Checkwin(board, 3))
-            {
-                cout << "User wins!!!\n";
-                flag = 1;
-                break;
-            }
-
-            comp_move(board, virtualBoard, depth, turn, 5);
-            for(int i=1;i<10;i++)
-            virtualBoard[i] = board[i];
-            turn++;
-            display(board);
-            if(Checkwin(board, 5))
-            {
-                cout << "Computer wins!!!\n";
-                flag = 1;
-                break;
-            }
+            playTicTacToe(COMPUTER,edepth);
+        }
+        else if (choice == 'y')
+        {
+            playTicTacToe(HUMAN,edepth);
+        }
+        else
+        {
+            cout << "Invalid choice\n";
         }
 
-        if(!flag)
-        cout << "Draw!!!\n";
-    }
-    else
-    {
-        while(turn<9)
-        {
-            comp_move(board, virtualBoard, depth, turn, 3);
-            turn++;
-            display(board);
-            if(Checkwin(board, 3))
-            {
-                cout << "Computer wins!!!\n";
-                flag = 1;
-                break;
-            }
+        cout << "\nDo you want to quit(y/n) : ";
+        cin >> conti;
 
-            user_move(board, 5);
-            turn++;
-            display(board);
-            if(Checkwin(board, 5))
-            {
-                cout << "User wins!!!\n";
-                flag = 1;
-                break;
-            }
-        }
+    } while (conti == 'n');
 
-        if(!flag)
-        {
-            Go(board, blank(board), 9);
-            display(board);
-            cout << "Draw!!!\n";
-        }
-    }
-
-    return 0;
+    return (0);
 }
